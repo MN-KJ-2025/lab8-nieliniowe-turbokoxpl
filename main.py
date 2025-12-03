@@ -6,9 +6,9 @@
 # =============================================================================
 import numpy as np
 from typing import Callable
+from typing import Union, Tuple
 
-
-def func(x: int | float | np.ndarray) -> int | float | np.ndarray:
+def func(x: Union[int , float , np.ndarray]) -> Union[int,float , np.ndarray]:
     """Funkcja wyliczająca wartości funkcji f(x).
     f(x) = e^(-2x) + x^2 - 1
 
@@ -79,13 +79,8 @@ def ddfunc(x: np.ndarray) -> np.ndarray:
     return 4 * np.exp(-2 * x) + 2
 
 
-def bisection(
-    a: int | float,
-    b: int | float,
-    f: Callable[[float], float],
-    epsilon: float,
-    max_iter: int,
-) -> tuple[float, int] | None:
+def bisection(a: Union[int , float] ,b: Union[int , float],f: Callable[[float], float],epsilon: float,max_iter: int,
+) -> Union[Tuple[float, int] , None]:
     """Funkcja aproksymująca rozwiązanie równania f(x) = 0 na przedziale [a,b] 
     metodą bisekcji.
 
@@ -103,16 +98,27 @@ def bisection(
             - Liczba wykonanych iteracji.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    if f(a)==0:
+        return a
+    if f(b)==0:
+        return b
+    if f(a)*f(b)>0:
+        return None
+    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)) or not isinstance(f, Callable) or not isinstance(epsilon, float) or not isinstance(max_iter, int):
+        return None
+    for i in range(max_iter):
+        c = (a+b)/2
+        if abs(f(c)) < epsilon:
+            return (c, i+1)
+        if np.sign(f(c)) == np.sign(f(a)):
+            a = c
+        else:
+            b = c
+    return (c, i+1)
 
 
-def secant(
-    a: int | float,
-    b: int | float,
-    f: Callable[[float], float],
-    epsilon: float,
-    max_iters: int,
-) -> tuple[float, int] | None:
+def secant(a: Union[int , float] ,b: Union[int , float],f: Callable[[float], float],epsilon: float,max_iter: int,
+) -> Union[Tuple[float, int] , None]:
     """funkcja aproksymująca rozwiązanie równania f(x) = 0 na przedziale [a,b] 
     metodą siecznych.
 
@@ -134,8 +140,8 @@ def secant(
 
 
 def difference_quotient(
-    f: Callable[[float], float], x: int | float, h: int | float
-) -> float | None:
+    f: Callable[[float], float], x: Union[int , float], h: Union[int , float]
+) -> Union[float, None]:
     """Funkcja obliczająca wartość iloazu różnicowego w punkcie x dla zadanej 
     funkcji f(x).
 
@@ -157,11 +163,11 @@ def newton(
     f: Callable[[float], float],
     df: Callable[[float], float],
     ddf: Callable[[float], float],
-    a: int | float,
-    b: int | float,
+    a: Union[int , float],
+    b: Union[int ,float],
     epsilon: float,
     max_iter: int,
-) -> tuple[float, int] | None:
+) -> Union[Tuple[float, int] , None]:
     """Funkcja aproksymująca rozwiązanie równania f(x) = 0 metodą Newtona.
 
     Args:
