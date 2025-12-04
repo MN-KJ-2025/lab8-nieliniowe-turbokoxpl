@@ -136,12 +136,35 @@ def secant(a: Union[int , float] ,b: Union[int , float],f: Callable[[float], flo
             - Liczba wykonanych iteracji.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)) or not isinstance(f, Callable) or not isinstance(epsilon, float) or not isinstance(max_iter, int):
+        return None
+    if epsilon <= 0:
+        return None
+    if max_iter <= 0:
+        return None
+    if f(a) * f(b) > 0:
+        return None
+
+    if f(a) == 0:
+        return a, 0
+    if f(b) == 0:
+        return b, 0
+
+    for iter in range(1,max_iter+1):
+        c = a - (f(a) / (f(b) - f(a))) * (b - a)
+        if abs(f(c)) < epsilon:
+            return c, iter
+        else:
+            if f(a) * f(c) > 0:
+                a = c
+            else:
+                b = c
+    return c,iter
+
 
 
 def difference_quotient(
-    f: Callable[[float], float], x: Union[int , float], h: Union[int , float]
-) -> Union[float, None]:
+    f: Callable[[float], float], x: Union[int , float], h: Union[int , float]) -> Union[float, None]:
     """Funkcja obliczająca wartość iloazu różnicowego w punkcie x dla zadanej 
     funkcji f(x).
 
@@ -156,7 +179,12 @@ def difference_quotient(
         (float): Wartość ilorazu różnicowego.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    if not isinstance(x, (int, float)) or not isinstance(h, (int, float)) or not isinstance(f, Callable):
+        return None
+    if h==0:
+        return None
+
+    return (f(x + h) - f(x)) / h
 
 
 def newton(
@@ -188,4 +216,44 @@ def newton(
             - Liczba wykonanych iteracji.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)) or not isinstance(f, Callable)or not isinstance(df, Callable)or not isinstance(ddf, Callable)   or not isinstance(epsilon, float) or not isinstance(max_iter, int):
+        return None
+    
+    if epsilon <= 0:
+        return None
+    if max_iter <= 0:
+        return None
+    if f(a) * f(b) > 0:
+        return None
+    if f(a) == 0:
+        return a, 0
+    if f(b) == 0:
+        return b, 0
+    
+
+    x0 = None
+
+
+    if f(a) * ddf(a) > 0:
+        x0 = a
+    elif f(b) * ddf(b) > 0:
+        x0 = b
+    else:
+        return None
+    
+
+    for i in range(1, max_iter + 1):
+        fx = f(x0)
+        dfx = df(x0)
+        if dfx == 0:
+
+            return None
+        x1 = x0 - fx / dfx
+        if abs(f(x1)) < epsilon or abs(x1 - x0) < epsilon:
+            return x1, i
+        x0 = x1
+        if not (a <= x0 <= b):
+            return None
+    return x0, max_iter
+
+    
